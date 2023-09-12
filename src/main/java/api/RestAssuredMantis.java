@@ -22,10 +22,10 @@ public class RestAssuredMantis {
     public void getCookies() {
         Response responselogin = RestAssured
                 .given()
-                .contentType("application/x-www-form-urlencoded")
-                .body("return=index.php&username=admin&password=admin20&secure_session=on")
-                .post("https://academ-it.ru/mantisbt/login.php")
-                .andReturn();
+                    .contentType("application/x-www-form-urlencoded")
+                    .body("return=index.php&username=admin&password=admin20&secure_session=on")
+                    .post("https://academ-it.ru/mantisbt/login.php")
+                    .andReturn();
 
         PHPSESSID = responselogin.cookie("PHPSESSID");
         System.out.println("PHPSESSID = " + PHPSESSID);
@@ -56,58 +56,38 @@ public class RestAssuredMantis {
         assertTrue(response.body().asString().contains("Real Name"));
     }
 
-
-
     @Test
-    public void postRealName() {
+    public void jsonBodyHashMap() {
+        HashMap<String,Object> dataBody = new HashMap<>();
 
-        String name = "[{\"key\":\"email\",\"value\":\"rov55an3014@mail.ru\"}," +
-                "{\"key\":\"password\",\"value\":\"\"}," +
-                "{\"key\":\"password_confirm\",\"value\":\"\"}," +
-                "{\"key\":\"password_current\",\"value\":\"\"}," +
-                "{\"key\":\"realname\",\"value\":\"Tom\"}]";
+        dataBody.put("realname", "Paul Potts");
 
         Response response = RestAssured
                 .given()
                     .log().all()
-                    .body(name)
-                .when()
                     .contentType("application/x-www-form-urlencoded")
                     .cookies(cookies)
+                    .queryParams(dataBody)
+                .when()
                     .post("https://academ-it.ru/mantisbt/account_update.php")
                     .andReturn();
+        response.prettyPrint();
+        assertEquals(200, response.statusCode(), "Response status code is not as expected");
+        assertTrue(response.body().asString().contains("Real name successfully updated"));
+    }
+    @Test
+    public void getRealName() {
+        Response response = RestAssured
+                .given()
+                    .log().all()
+                    .cookies(cookies)
+                    .get("https://academ-it.ru/mantisbt/my_view_page.php")
+                .andReturn();
 
         System.out.println("\nResponse");
         response.prettyPrint();
 
         assertEquals(200, response.statusCode(), "Response status code is not as expected");
-        assertTrue(response.body().asString().contains("Bob"));
+        assertTrue(response.body().asString().contains("Paul Potts"));
     }
-
-//    @Test
-//    public void testGptPost(){
-//                    // Set base URI
-//            RestAssured.baseURI = "https://academ-it.ru";
-//
-//            // Define request body
-//            String requestBody = "[{\"key\":\"email\",\"value\":\"rov55an3014@mail.ru\"},{\"key\":\"password\",\"value\":\"\"},{\"key\":\"password_confirm\",\"value\":\"\"},{\"key\":\"password_current\",\"value\":\"\"},{\"key\":\"realname\",\"value\":\"Bob\"}]";
-//
-//            // Send POST request
-//            Response response = RestAssured
-//                    .given()
-//                        .header("Content-Type", "application/x-www-form-urlencoded")
-//                        .body(requestBody)
-//                        .cookies(cookies)
-//                        .post("/mantisbt/account_update.php")
-//                        .andReturn();
-//                        response.prettyPrint();
-//
-//            // Get and print response
-//            int statusCode = response.getStatusCode();
-//            String responseBody = response.getBody().asString();
-//
-//            System.out.println("Status Code: " + statusCode);
-//            System.out.println("Response Body: " + responseBody);
-//
-//    }
 }

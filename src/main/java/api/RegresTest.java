@@ -1,35 +1,37 @@
 package api;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
 
 
 public class RegresTest {
 
     @Test
-    void Reqres (){
+    void Reqres() {
         String orderReq = "{\n" +
                 "    \"name\": \"morpheus\",\n" +
                 "    \"job\": \"leader\"\n" +
                 "}";
-    RestAssured
-            .given()
-                .log().all()
-            .when()
-                .contentType(ContentType.JSON)
-                .body(orderReq)
-                .post("https://reqres.in/api/users")
-            .then()
-                .log().all()
-                .statusCode(201);
+        RestAssured
+                .given()
+                    .log().all()
+                .when()
+                    .contentType(ContentType.JSON)
+                    .body(orderReq)
+                    .post("https://reqres.in/api/users")
+                .then()
+                    .log().all()
+                    .statusCode(201);
     }
 
     @Test
-    void Login (){
+    void Login() {
         String loginReq = "{\n" +
                 "    \"email\": \"eve.holt@reqres.in\",\n" +
                 "    \"password\": \"cityslicka\"\n" +
@@ -45,8 +47,9 @@ public class RegresTest {
                     .log().all()
                     .statusCode(200);
     }
+
     @Test
-    void Update (){
+    void Update() {
         String UpdateReq = "{\n" +
                 "    \"name\": \"morpheus\",\n" +
                 "    \"job\": \"zion resident\"\n" +
@@ -62,8 +65,9 @@ public class RegresTest {
                     .log().all()
                     .statusCode(200);
     }
+
     @Test
-    void Users (){
+    void Users() {
         RestAssured
                 .given()
                     .log().all()
@@ -76,7 +80,7 @@ public class RegresTest {
     }
 
     @Test
-    public void Getdelayedresponse(){
+    public void Getdelayedresponse() {
         ValidatableResponse response = RestAssured
                 .given()
                     .param("delay", "3")
