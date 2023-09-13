@@ -7,7 +7,9 @@ import io.restassured.response.ValidatableResponse;
 import org.codehaus.groovy.ast.expr.UnaryMinusExpression;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class RegresTest {
@@ -91,5 +93,19 @@ public class RegresTest {
                     .log().all()
                     .statusCode(200);
 
+    }
+    @Test
+    public void GetListUsersWithParamInMap() {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("page", "3");
+
+        Response response = RestAssured
+                .given()
+                    .log().all()
+                    .queryParams(params)
+                    .get("https://reqres.in/api/users")
+                    .andReturn();
+        response.prettyPrint();
     }
 }
