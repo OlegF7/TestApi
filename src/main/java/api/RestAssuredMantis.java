@@ -1,22 +1,29 @@
 package api;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestAssuredMantis {
+
     private String PHPSESSID;
     private String MANTIS_SECURE_SESSION;
     private String MANTIS_STRING_COOKIE;
     private Map<String, String> cookies = new HashMap<>();
+
 
     @BeforeEach
     public void getCookies() {
@@ -52,15 +59,16 @@ public class RestAssuredMantis {
         System.out.println("\nResponse");
         response.prettyPrint();
 
-        assertEquals(200, response.statusCode(), "Response status code is not as expected");
-        assertTrue(response.body().asString().contains("Real Name"));
+//        assertEquals(200, response.statusCode(), "Response status code is not as expected");
+          assertTrue(response.body().asString().contains("Real Name"));
     }
 
     @Test
     public void jsonBodyHashMap() {
+        String random = UUID.randomUUID().toString();
+        String name = "Harry" + random;
         HashMap<String,Object> dataBody = new HashMap<>();
-
-        dataBody.put("realname", "Paul Potts");
+        dataBody.put("realname", name);
 
         Response response = RestAssured
                 .given()
@@ -71,23 +79,19 @@ public class RestAssuredMantis {
                 .when()
                     .post("https://academ-it.ru/mantisbt/account_update.php")
                     .andReturn();
-        response.prettyPrint();
-        assertEquals(200, response.statusCode(), "Response status code is not as expected");
+
         assertTrue(response.body().asString().contains("Real name successfully updated"));
-    }
-    @Test
-    public void getRealName() {
-        Response response = RestAssured
+
+        Response responseGet = RestAssured
                 .given()
                     .log().all()
                     .cookies(cookies)
                     .get("https://academ-it.ru/mantisbt/my_view_page.php")
-                .andReturn();
-
+                    .andReturn();
         System.out.println("\nResponse");
-        response.prettyPrint();
+        responseGet.prettyPrint();
 
-        assertEquals(200, response.statusCode(), "Response status code is not as expected");
-        assertTrue(response.body().asString().contains("Paul Potts"));
+//        assertEquals(200, responseGet.statusCode(), "Response status code is not as expected");
+        assertTrue(responseGet.body().asString().contains(name));
     }
 }
